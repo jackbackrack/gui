@@ -974,11 +974,7 @@ int viz_t::audio_callback
   flo *istream = (flo*)input;
   flo *ostream = (flo*)output;
   n_aud_frames = n_frames;
-  if (is_first_audio_tick) {
-    first_audio_tick  = time_info->outputBufferDacTime;
-    is_first_audio_tick = false;
-  }
-  audio_tick   = time_info->outputBufferDacTime - first_audio_tick;
+  audio_tick   = time_info->outputBufferDacTime;
   // printf("AUDIO_TICK %f\n", audio_tick);
   if (is_playing_back)
     post("OVERRUN ERROR\n");

@@ -95,8 +95,6 @@ class viz_t {
   Aud **out_samples;
 
   double audio_tick;
-  double first_audio_tick;
-  bool is_first_audio_tick;
   int is_playing_back;
   int is_enable_audio;
 
@@ -191,7 +189,6 @@ class viz_t {
     view_size(100.0, 100.0),
     aspect_ratio(1.0),
 #ifdef IS_AUDIO
-    is_first_audio_tick(true),
     audio_tick(-1.0),
     is_playing_back(0),
     is_enable_audio(1),
