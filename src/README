@@ -1,0 +1,6 @@
+Library dependencies:
+
+1. OpenCV
+2. PortAudio
+3. PortMIDI
+4. ODE
