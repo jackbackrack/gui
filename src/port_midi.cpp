@@ -154,10 +154,10 @@ void sys_pollmidiqueue( void ) {
 	int dat1 = Pm_MessageData1(msg);
 	int dat2 = Pm_MessageData2(msg);
 	switch (cmd) {
-	case MIDINOTEON:  inmidi_noteon(0, chan, dat1, dat2); break;
-	case MIDINOTEOFF: inmidi_noteon(0, chan, dat1, 0);    break;
-	case MIDICONTROL: inmidi_control(0, chan, dat1, dat2);    break;
-	default:          inmidi_misc(cmd, chan, dat1, dat2); break;
+	case MIDINOTEON:  inmidi_noteon(0, chan, dat1, dat2);  break;
+	case MIDINOTEOFF: inmidi_noteon(0, chan, dat1, 0);     break;
+	case MIDICONTROL: inmidi_control(0, chan, dat1, dat2); break;
+	default:          inmidi_misc(cmd, chan, dat1, dat2);  break;
 	  // post("GOT MIDI INPUT %d %d %d %d\n", cmd, chan, dat1, dat2);
 	}
       } 

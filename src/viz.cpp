@@ -1060,6 +1060,8 @@ void viz_t::audio_init (void) {
 
     sprintf(devname, "/dev/dsp");
     audio_open_stream(devname, &playback_stream, FRAMES_PER_BUFFER, sys_audio_callback, (void*)this);
+    for (size_t i = 0; i < N_SLIDERS; i++)
+      sliders[i] = 0.0;
   }
 }
 
@@ -1080,14 +1082,11 @@ void viz_t::audio_stop (void) {
 #include "port_midi.h"
 #include "porttime.h"
 
-int vals[10];
-
 void inmidi_misc(int portno, int channel, int dat1, int dat2) {
   if (portno == 176 && channel == 0) {
     int n = dat1-81;
-    if (n >= 0 && n < 8) {
-      // post("N %d D %d\n", n, dat2);
-      vals[n] = dat2;
+    if (n >= 0 && n < N_SLIDERS) {
+      viz->sliders[n] = dat2 / 127.0;
     }
     // post("KNOB %d %d %d %d\n", portno, channel, dat1, dat2);
     // SETFXNUM(knob_scalars[dat1]->dst, dat2 / 127.0);

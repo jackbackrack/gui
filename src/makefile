@@ -8,7 +8,7 @@ ifeq ($(OS2), Darwin)
   LIBS = -lobjc -lopencv_core -lopencv_highgui -lopencv_video -lopencv_imgproc -lopencv_objdetect -lopencv_calib3d -lode -framework GLUT -framework OpenGL -L/opt/local/lib -lportmidi -lportaudio #-lglaux # -pg # -framework Foundation
   #HLLIBS = 
   INCS = -I/usr/local/include -I/opt/local/include/OpenEXR -I/opt/local/include/
-  FLAGS = -flat_namespace  -Wno-write-strings -g -D MACOSX=1 -DIS_CV -D IS_AUDIO=1 # -O2 -pg 
+  FLAGS = -flat_namespace  -Wno-write-strings -g -O2 -D MACOSX=1 -DIS_CV -D IS_AUDIO=1 # -pg 
 else
   OS := $(strip $(shell uname -o))
   ifeq ($(OS), GNU/Linux)

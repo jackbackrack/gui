@@ -95,6 +95,7 @@ class viz_t {
   Aud **out_samples;
 
   double audio_tick;
+  double sliders[10];
   int is_playing_back;
   int is_enable_audio;
 
