@@ -95,7 +95,7 @@ class viz_t {
   Aud **out_samples;
 
   double audio_tick;
-  double sliders[10];
+  double sliders[N_SLIDERS];
   int is_playing_back;
   int is_enable_audio;
 
@@ -147,6 +147,7 @@ class viz_t {
   void prepare_view (void);
   void pick_nodes ( int x, int y, bool is_add );
   void base_keyboard_handler( unsigned char key, int x, int y );
+  void base_keyboard_up_handler( unsigned char key, int x, int y );
   void on_passive_mouse_motion( int x, int y );
   void on_start_drag(int x, int y);
   void on_end_drag(void);
@@ -217,6 +218,7 @@ class viz_t {
   virtual int close (void) { if (is_full_screen) toggle_full_screen(); }
   virtual int exec (int is_pause) { }
   virtual int key_hit (int key, int modifiers) { }
+  virtual int key_release (int key, int modifiers) { }
   virtual int render (int is_picking) { }
   virtual int render_frame_monitors (void) { }
   virtual int process_picks (std::vector< int >& picks, bool is_add) { }

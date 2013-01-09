@@ -158,7 +158,6 @@ void sys_pollmidiqueue( void ) {
 	case MIDINOTEOFF: inmidi_noteon(0, chan, dat1, 0);     break;
 	case MIDICONTROL: inmidi_control(0, chan, dat1, dat2); break;
 	default:          inmidi_misc(cmd, chan, dat1, dat2);  break;
-	  // post("GOT MIDI INPUT %d %d %d %d\n", cmd, chan, dat1, dat2);
 	}
       } 
     } else

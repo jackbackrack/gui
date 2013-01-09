@@ -12,6 +12,6 @@ extern void sys_putmidimess(int portno, int a, int b, int c);
 extern void sys_close_midi ( void );
 extern void sys_init_midi( void );
 
-#define N_SLIDERS 8
+#define N_SLIDERS 256
 
 #endif

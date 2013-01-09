@@ -508,8 +508,17 @@ void viz_t::base_keyboard_handler( unsigned char key, int x, int y ) {
   glutPostRedisplay();
 }
 
+void viz_t::base_keyboard_up_handler( unsigned char key, int x, int y ) {
+  is_key_hit[key] = 0;
+  key_release(key, key_modifiers); 
+}
+
 static void c_keyboard_handler( unsigned char key, int x, int y ) {
   viz->base_keyboard_handler(key, x, y);
+}
+
+static void c_keyboard_up_handler( unsigned char key, int x, int y ) {
+  viz->base_keyboard_up_handler(key, x, y);
 }
 
 static flo glutStrokeHeight (void *font) {
@@ -1084,11 +1093,11 @@ void viz_t::audio_stop (void) {
 
 void inmidi_misc(int portno, int channel, int dat1, int dat2) {
   if (portno == 176 && channel == 0) {
-    int n = dat1-81;
+    int n = dat1;
     if (n >= 0 && n < N_SLIDERS) {
       viz->sliders[n] = dat2 / 127.0;
     }
-    // post("KNOB %d %d %d %d\n", portno, channel, dat1, dat2);
+    post("KNOB %d %d %d %d\n", portno, channel, dat1, dat2);
     // SETFXNUM(knob_scalars[dat1]->dst, dat2 / 127.0);
   }
 }
@@ -1209,6 +1218,7 @@ void viz_t::base_init ( int argc, const char* argv[] ) {
     glutReshapeFunc(c_resize);
     glutIdleFunc(c_idle);
     glutKeyboardFunc(c_keyboard_handler);
+    glutKeyboardUpFunc(c_keyboard_up_handler);
     glutSpecialFunc(c_special_handler);
     if (is_full_screen)
       glutFullScreen();
