@@ -1070,7 +1070,7 @@ void viz_t::audio_init (void) {
     sprintf(devname, "/dev/dsp");
     audio_open_stream(devname, &playback_stream, FRAMES_PER_BUFFER, sys_audio_callback, (void*)this);
     for (size_t i = 0; i < N_SLIDERS; i++)
-      sliders[i] = 0.0;
+      sliders.push_back(0.0);
   }
 }
 

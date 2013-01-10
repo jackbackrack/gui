@@ -17,7 +17,6 @@
 #endif
 
 #define MAX_PICKS 100
-// #define MAX_SLIDERS 8
 #define MAX_KEYS 128
 #define MOVE_AMOUNT 20000
 
@@ -95,7 +94,7 @@ class viz_t {
   Aud **out_samples;
 
   double audio_tick;
-  double sliders[N_SLIDERS];
+  std::vector<double> sliders;
   int is_playing_back;
   int is_enable_audio;
 
