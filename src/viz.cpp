@@ -742,9 +742,9 @@ void viz_t::setup_rc (void) {
     // }
 
   // Black background
-    if (is_white_background)
+    if (is_white_background) {
       glClearColor(1.0f, 1.0f, 1.0f, 1.0f );
-    else
+    } else
       glClearColor(0.0f, 0.0f, 0.0f, 1.0f );
 
   // Hidden surface removal
@@ -1248,8 +1248,15 @@ void viz_t::base_init ( int argc, const char* argv[] ) {
       // glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);  // Set Texture Gen Mode For S To Sphere Mapping
       // glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);  // Set Texture Gen Mode For T To Sphere Mapping
     }
+
     if (is_shadowing || is_lighting)
       setup_rc();
+    else {
+      if (is_white_background) {
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f );
+      } else
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f );
+    }
     /*
     glClearColor (0.0f, 0.0f, 0.0f, 0.5f);        // Black Background
     glLineWidth(1);

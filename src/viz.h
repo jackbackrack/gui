@@ -160,6 +160,7 @@ class viz_t {
   viz_t () : 
     is_dumping_avi(false), 
     is_dumping_jpgs(false),
+    is_white_background(false),
     is_step(0),
     is_stepping(0),
     is_dumping(0),

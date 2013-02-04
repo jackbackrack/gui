@@ -30,6 +30,8 @@ extern int time_msecs (Time *time);
 
 #define MAX_STRBUF 1024
 
+extern void set_rnd ( unsigned int seed );
+
 extern float rndf ();
 extern float rndf (float mn, float mx);
 

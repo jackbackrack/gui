@@ -160,6 +160,10 @@ void FREE(void *ptr_) {
   *ptr = NULL;
 }
 
+void set_rnd ( unsigned int seed ) {
+  srand(seed);
+}
+
 float rndf () {
   return (float)((double)rand() / (double)RAND_MAX);
 }
