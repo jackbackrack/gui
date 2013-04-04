@@ -496,13 +496,8 @@ void viz_t::base_keyboard_handler( unsigned char key, int x, int y ) {
     //       open_avi_out("./out.avi");
     //     }
     //     break;
-  case 'q': close(); close_avi_out(); 
-#ifdef IS_AUDIO
-    audio_stop();
-    Pa_Terminate();
-    // audio_terminate();
-#endif
-    exit(0);
+  case 'q': is_quit = true; break;
+
   default: key_hit(key, key_modifiers); break;
   }
   glutPostRedisplay();
@@ -916,6 +911,17 @@ static void c_render (void) {
 }
 
 void viz_t::idle (void) {
+  if (is_quit) {
+#ifdef IS_AUDIO
+    audio_stop();
+    Pa_Terminate();
+    // audio_terminate();
+#endif
+    if (is_full_screen) toggle_full_screen();
+    glutDestroyWindow(1);
+    viz->close(); 
+    exit(0); 
+  }
   double delay;
   double time = set_secs();
   delay     = (time - last_tval);
@@ -1139,7 +1145,7 @@ int viz_t::parse_args (int offset, int argc, const char *argv[]) {
     
     // post("ARG %s\n", arg);
     if (strcmp(arg, "-step") == 0) {
-      // post("STEPPING\n");
+      post("STEPPING\n");
       is_step = 0;
       is_stepping = 1;
     } else if (strcmp(arg, "-is-audio") == 0) { 
@@ -1210,7 +1216,8 @@ void viz_t::base_init ( int argc, const char* argv[] ) {
     glutInitDisplayMode (GLUT_ACCUM | GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
     glutInitWindowSize (window_size.x, window_size.y); 
     glutInitWindowPosition (window_pos.x, window_pos.y);
-    glutCreateWindow (argv[0]);
+    int handle = glutCreateWindow (argv[0]);
+    printf("WINDOW HANDLE %d\n", handle);
     glutMouseFunc(c_on_button_press );
     glutMotionFunc(c_on_mouse_motion );
     glutPassiveMotionFunc(c_on_passive_mouse_motion );
@@ -1325,8 +1332,7 @@ void resume_execution_fun (cmd_t* cmd, int key, int modifiers, void* obj) { viz-
 cmd_t* resume_execution_cmd
  = new cmd_t("resume-execution", "resume execution", &resume_execution_fun);
 void quit_fun (cmd_t* cmd, int key, int modifiers, void* obj) { 
-  viz->close(); 
-  exit(0); 
+  viz->is_quit = true;
 }
 cmd_t* quit_cmd
  = new cmd_t("quit", "quit", &quit_fun);

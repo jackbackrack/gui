@@ -52,6 +52,10 @@ enum {
   FONT_VARIABLE = 1
 };
 
+std::vector< double > layout_nums( double x, ... );
+std::vector< double > layout_rep_num( int n, double x );
+void layout (double total, std::vector< double > ratios, double spacing, std::vector< double >& offsets, std::vector< double >& amounts, bool is_reversed = false );
+
 extern void init_gfx ();
 
 #endif

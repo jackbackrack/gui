@@ -35,6 +35,7 @@
 class viz_t {
  public:
   std::string cmd;
+  int is_quit;
   int is_console;
   int mouse_button;
   int click;
@@ -158,6 +159,7 @@ class viz_t {
   void regenerate_shadow_map(void);
   void setup_rc(void);
   viz_t () : 
+    is_quit(false),
     is_dumping_avi(false), 
     is_dumping_jpgs(false),
     is_white_background(false),
@@ -215,7 +217,7 @@ class viz_t {
 
   virtual int init (void) { }
   virtual int open (int arg_offset, int argc, const char *argv[]) { }
-  virtual int close (void) { if (is_full_screen) toggle_full_screen(); }
+  virtual int close (void) { }
   virtual int exec (int is_pause) { }
   virtual int key_hit (int key, int modifiers) { }
   virtual int key_release (int key, int modifiers) { }

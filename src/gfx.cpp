@@ -769,4 +769,40 @@ void rgb_to_hsv (double r, double g, double b, double *h, double *s, double *v) 
   }
 }
 
+std::vector< double > layout_nums( double x, ... ) {
+  std::vector< double > res;
+  va_list ap;
+  va_start(ap, x); 
+  for (double a = x; a > 0.0; a = va_arg(ap, double)) 
+    res.push_back(a);
+  va_end(ap);
+  return res;
+}
+
+std::vector< double > layout_rep_num( int n, double x ) {
+  std::vector< double > res;
+  for (int i = 0; i < n; i++)
+    res.push_back(x);
+  return res;
+}
+
+void layout (double total, std::vector< double > ratios, double spacing, std::vector< double >& offsets, std::vector< double >& amounts, bool is_reversed ) {
+  if (ratios.size() > 0) {
+    std::vector< double > factors;
+    double sum = -spacing;
+    for (size_t i = 0; i < ratios.size(); i++) 
+      sum += ratios[i] + spacing;
+    for (size_t i = 0; i < ratios.size(); i++) 
+      amounts.push_back(ratios[i]*total/sum);
+    spacing *= total/sum;
+    double dir = is_reversed ? -1 : 1;
+    double offset = dir * (- total / 2.0 + 0.5 * amounts[0]);
+    offsets.push_back(offset);
+    for (size_t i = 1; i < ratios.size(); i++) {
+      offset = offset + dir * ((0.5 * (amounts[i-1] + amounts[i])) + spacing);
+      offsets.push_back(offset);
+    }
+  }
+}
+
 
