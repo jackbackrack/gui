@@ -13,8 +13,8 @@ else
   OS := $(strip $(shell uname -o))
   ifeq ($(OS), GNU/Linux)
     $(info Compiling for GNU/Linux)
-    INCS = -I/usr/include/opencv -I/usr/local/include/opencv  -DIS_CV # -I/usr/local/share/ipp/include
-    LIBS = -lglut -lGL -lGLU -lm -lcv -lcvaux -lhighgui # -L"/usr/local/share/ipp/sharedlib"  -lippi -lippcore -lippcv -lippcc -lguide -lippvm # -lglaux # -pg
+    INCS = -I/usr/include -I/usr/include/OpenEXR  -DIS_CV
+    LIBS = -lglut -lGL -lGLU -lm -lopencv_imgproc -lopencv_core -lopencv_highgui # -lcv -lcvaux -lhighgui # -L"/usr/local/share/ipp/sharedlib"  -lippi -lippcore -lippcv -lippcc -lguide -lippvm # -lglaux # -pg
     HLLIBS = -lm
     FLAGS = -g -Wno-write-strings $(INCS)# -pg  -O3
   else
@@ -80,8 +80,8 @@ gui.o: gui.cpp props.h cmds.h keys.h
 gui.a: props.o cmds.o keys.o utils.o port_midi.o
 	ar -v -r -u gui.a props.o cmds.o keys.o port_midi.o
 
-app.a: props.o cmds.o keys.o draw.o utils.o lisp.o reader.o trackball.o viz.o timer.o gfx.o lay.o port_midi.o port_audio.o
-	ar -v -r -u app.a props.o cmds.o keys.o draw.o lisp.o reader.o trackball.o viz.o timer.o gfx.o lay.o utils.o port_midi.o port_audio.o
+app.a: props.o cmds.o keys.o draw.o utils.o lisp.o reader.o trackball.o viz.o timer.o gfx.o lay.o # port_midi.o port_audio.o
+	ar -v -r -u app.a props.o cmds.o keys.o draw.o lisp.o reader.o trackball.o viz.o timer.o gfx.o lay.o utils.o # port_midi.o port_audio.o
 
 gui: gui.o gui.a lisp.o
 	g++ $(LDFLAGS) -o gui gui.o lisp.o gui.a utils.o  $(LIBS) 
@@ -99,8 +99,8 @@ lay: lay-test.o app.a
 	g++ $(LDFLAGS) -o lay lay-test.o $(LIBS) app.a
 
 .c.o:
-	$(CC) $(FLAGS) $(INCS) -c $<
+	$(CC) $(FLAGS) -c $<
 
 .cpp.o:
-	g++ $(FLAGS) $(INCS) -c $<
+	g++ $(FLAGS) -c $<
 

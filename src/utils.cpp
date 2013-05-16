@@ -196,6 +196,8 @@ size_t get_mem_size ( void ) {
   return vsz * 1024;
 }
 
+#include <sys/resource.h>
+
 double get_cpu_time( void ) { 
   struct timeval tim;        
   struct rusage ru;        
