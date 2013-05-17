@@ -719,11 +719,10 @@ void hsv_to_rgb (double h, double s, double v, double *r, double *g, double *b) 
   if (s == 0.0) {
     rt = gt = bt = v;
   } else {
-    int i;
     double h_temp = (h == 360.0) ? 0.0 : h;
     double f, p, q, t; 
     h_temp /= 60.0;
-    i = (int)h_temp;
+    int i = (int)h_temp;
     f = h_temp - i;
     p = v*(1-s);
     q = v*(1-(s*f));
