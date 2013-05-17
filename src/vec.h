@@ -439,6 +439,10 @@ inline void gl_scale(const vec_t<3>& v) {
   glScaled(v.x, v.y, v.z);
 }
 
+inline void gl_scale(const vec_t<2>& v) {
+  glScaled(v.x, v.y, 1.0);
+}
+
 template<class T,int d> inline vec_t<d,T> normalize(const vec_t<d,T>& v) {
   T l = len(v);
   if (l)
@@ -573,5 +577,10 @@ template<class T> inline std::ostream& operator<<(std::ostream& output, const ve
   output << '[' << v.x << ',' << v.y << ',' << v.z << ']';
   return output;
 }
+
+typedef vec_t<2, double> vec2d_t ;
+typedef vec_t<3, double> vec3d_t ;
+typedef vec_t<2, int> vec2i_t ;
+typedef vec_t<3, int> vec3i_t ;
 
 #endif

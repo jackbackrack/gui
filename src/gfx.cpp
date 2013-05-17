@@ -786,7 +786,7 @@ std::vector< double > layout_rep_num( int n, double x ) {
   return res;
 }
 
-void layout (double total, std::vector< double > ratios, double spacing, std::vector< double >& offsets, std::vector< double >& amounts, bool is_reversed ) {
+void layout (double total, std::vector< double >& ratios, double spacing, std::vector< double >& offsets, std::vector< double >& amounts, bool is_reversed ) {
   if (ratios.size() > 0) {
     std::vector< double > factors;
     double sum = -spacing;
@@ -805,4 +805,30 @@ void layout (double total, std::vector< double > ratios, double spacing, std::ve
   }
 }
 
+Layout fabLayout(vec2d_t off, vec2d_t mag) {
+  Layout res(off, mag);
+  return res;
+}
+
+std::vector< Layout > vbox (std::vector< double >& ratios, double spacing, bool is_reversed ) {
+  std::vector< Layout > res;
+  std::vector< double > offsets, amounts;
+  layout(2.0, ratios, spacing, offsets, amounts, is_reversed);
+  for (int i = 0; i < offsets.size(); i++) {
+    Layout lay(vec2d_t(0.0, -1.0 + offsets[i]), vec2d_t(1.0, amounts[i]));
+    res.push_back(lay);
+  }
+  return res;
+}
+
+std::vector< Layout > hbox (std::vector< double >& ratios, double spacing, bool is_reversed ) {
+  std::vector< Layout > res;
+  std::vector< double > offsets, amounts;
+  layout(2.0, ratios, spacing, offsets, amounts, is_reversed);
+  for (int i = 0; i < offsets.size(); i++) {
+    Layout lay(vec2d_t(-1.0 + offsets[i], 0.0), vec2d_t(amounts[i], 1.0));
+    res.push_back(lay);
+  }
+  return res;
+}
 

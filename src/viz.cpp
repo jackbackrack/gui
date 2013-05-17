@@ -1217,7 +1217,6 @@ void viz_t::base_init ( int argc, const char* argv[] ) {
     glutInitWindowSize (window_size.x, window_size.y); 
     glutInitWindowPosition (window_pos.x, window_pos.y);
     int handle = glutCreateWindow (argv[0]);
-    printf("WINDOW HANDLE %d\n", handle);
     glutMouseFunc(c_on_button_press );
     glutMotionFunc(c_on_mouse_motion );
     glutPassiveMotionFunc(c_on_passive_mouse_motion );

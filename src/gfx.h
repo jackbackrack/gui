@@ -52,9 +52,28 @@ enum {
   FONT_VARIABLE = 1
 };
 
+class Layout {
+ public:
+  vec2d_t off;
+  vec2d_t mag;
+  void begin( void ) { 
+    glPushMatrix(); 
+    gl_translate(off);
+    gl_scale(mag);
+  }
+  void end( void ) { 
+    glPopMatrix(); 
+  }
+ Layout(vec2d_t off, vec2d_t mag) : off(off), mag(mag) { }
+};
+
 std::vector< double > layout_nums( double x, ... );
 std::vector< double > layout_rep_num( int n, double x );
-void layout (double total, std::vector< double > ratios, double spacing, std::vector< double >& offsets, std::vector< double >& amounts, bool is_reversed = false );
+
+void layout (double total, std::vector< double >& ratios, double spacing, std::vector< double >& offsets, std::vector< double >& amounts, bool is_reversed = false );
+
+std::vector< Layout > vbox (std::vector< double >& ratios, double spacing, bool is_reversed = false );
+std::vector< Layout > hbox (std::vector< double >& ratios, double spacing, bool is_reversed = false );
 
 extern void init_gfx ();
 
