@@ -1145,7 +1145,6 @@ int viz_t::parse_args (int offset, int argc, const char *argv[]) {
     
     // post("ARG %s\n", arg);
     if (strcmp(arg, "-step") == 0) {
-      post("STEPPING\n");
       is_step = 0;
       is_stepping = 1;
     } else if (strcmp(arg, "-is-audio") == 0) { 

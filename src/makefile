@@ -5,10 +5,11 @@ OS2 := $(strip $(shell uname))
 ifeq ($(OS2), Darwin)
   # Mac OSX
   $(info Compiling for Darwin)
-  LIBS = -lobjc -lopencv_core -lopencv_highgui -lopencv_video -lopencv_imgproc -lopencv_objdetect -lopencv_calib3d -lode -framework GLUT -framework OpenGL -L/opt/local/lib -lportmidi -lportaudio #-lglaux # -pg # -framework Foundation
+  LIBS = -lobjc -lopencv_core -lopencv_highgui -lopencv_video -lopencv_imgproc -lopencv_objdetect -lopencv_calib3d -lode -framework GLUT -framework OpenGL -L/opt/local/lib -L/usr/local/lib -lportmidi -lportaudio #-lglaux # -pg # -framework Foundation
   #HLLIBS = 
-  INCS = -I/usr/local/include -I/opt/local/include/OpenEXR -I/opt/local/include/
-  FLAGS = -flat_namespace  -Wno-write-strings -g -O3 -D MACOSX=1 -DIS_CV -D IS_AUDIO=1 # -pg  
+  AUDIO_OBJS = port_midi.o port_audio.o
+  INCS = -I/usr/local/include -I/opt/local/include/OpenEXR -I/opt/local/include/ -I/usr/local/include/OpenEXR
+  FLAGS = -flat_namespace  -Wno-write-strings -g -O3 -D MACOSX=1 -DIS_CV -D IS_AUDIO=1 $(INCS) # -pg  
 else
   OS := $(strip $(shell uname -o))
   ifeq ($(OS), GNU/Linux)
@@ -80,8 +81,8 @@ gui.o: gui.cpp props.h cmds.h keys.h
 gui.a: props.o cmds.o keys.o utils.o port_midi.o
 	ar -v -r -u gui.a props.o cmds.o keys.o port_midi.o
 
-app.a: props.o cmds.o keys.o draw.o utils.o lisp.o reader.o trackball.o viz.o timer.o gfx.o lay.o # port_midi.o port_audio.o
-	ar -v -r -u app.a props.o cmds.o keys.o draw.o lisp.o reader.o trackball.o viz.o timer.o gfx.o lay.o utils.o # port_midi.o port_audio.o
+app.a: props.o cmds.o keys.o draw.o utils.o lisp.o reader.o trackball.o viz.o timer.o gfx.o lay.o $(AUDIO_OBJS)
+	ar -v -r -u app.a $^
 
 gui: gui.o gui.a lisp.o
 	g++ $(LDFLAGS) -o gui gui.o lisp.o gui.a utils.o  $(LIBS) 
