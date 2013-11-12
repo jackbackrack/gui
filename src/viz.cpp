@@ -918,8 +918,8 @@ void viz_t::idle (void) {
     // audio_terminate();
 #endif
     if (is_full_screen) toggle_full_screen();
-    glutDestroyWindow(1);
     viz->close(); 
+    glutDestroyWindow(1);
     exit(0); 
   }
   double delay;

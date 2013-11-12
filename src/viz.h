@@ -215,16 +215,16 @@ class viz_t {
     dragging_machine(0),
     drag_old_pos() { };
 
-  virtual int init (void) { }
-  virtual int open (int arg_offset, int argc, const char *argv[]) { }
-  virtual int close (void) { }
-  virtual int exec (int is_pause) { }
-  virtual int key_hit (int key, int modifiers) { }
-  virtual int key_release (int key, int modifiers) { }
-  virtual int render (int is_picking) { }
-  virtual int render_frame_monitors (void) { }
-  virtual int process_picks (std::vector< int >& picks, bool is_add) { }
-  virtual int handle_drag (vec_t<2> del) { }
+    virtual int init (void) { return 0; }
+    virtual int open (int arg_offset, int argc, const char *argv[]) { return 0; }
+    virtual int close (void) { return 0; }
+    virtual int exec (int is_pause) { return 0; }
+    virtual int key_hit (int key, int modifiers) { return 0; }
+    virtual int key_release (int key, int modifiers) { return 0; }
+    virtual int render (int is_picking) { return 0; }
+    virtual int render_frame_monitors (void) { return 0; }
+    virtual int process_picks (std::vector< int >& picks, bool is_add) { return 0; }
+    virtual int handle_drag (vec_t<2> del) { return 0; }
   void open_avi_out (char *filename);
   void close_avi_out (void);
   void write_avi_out (void);

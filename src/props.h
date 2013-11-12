@@ -51,7 +51,7 @@ class prop_t : public obj_t {
   virtual void   copy (void* dst, void* src);
   virtual int    scan (char *str, void* obj = NULL) { return 0; }
   virtual int    scan (obj_t *val, void* obj = NULL) { return 0; }
-  virtual std::string post (std::string& str, void* obj = NULL) { }
+  virtual std::string post (std::string& str, void* obj = NULL) { return 0; }
   virtual int    incr (void* obj = NULL) { return 0; }
   virtual int    decr (void* obj = NULL) { return 0; }
 };

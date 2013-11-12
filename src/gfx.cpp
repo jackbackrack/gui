@@ -290,6 +290,9 @@ double font_char_width (void *font, char c) {
 
 void stroke_text (void *font, char *txt) {
   glPushMatrix();
+  glEnable(GL_BLEND);
+  glEnable(GL_LINE_SMOOTH);
+  glLineWidth(1.5);  
   for (int i=0; i<strlen(txt); i++)
     glutStrokeCharacter(font, txt[i]);
   glPopMatrix();

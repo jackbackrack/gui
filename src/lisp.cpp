@@ -29,6 +29,7 @@ obj_t* env_lookup (env_t& env, obj_t* name) {
       return env[2*i+1];
   }
   uerror("Unable to find binding %s\n", sym_name(name));
+  return NULL;
 }
 
 obj_t* env_lookup (env_t& env, char* name) {
@@ -39,6 +40,7 @@ obj_t* env_lookup (env_t& env, char* name) {
       return env[2*i+1];
   }
   uerror("Unable to find binding %s\n", name);
+  return NULL;
 }
 
 /// OBJ
@@ -144,6 +146,7 @@ static obj_t* eval_apply(env_t& env, obj_t* op, obj_t* args) {
     return fun->apply(env, eval_args(env, args));
   } else {
     uerror("Unable to apply %s to args\n", class_name(obj_class(op)));
+    return NULL;
   }
 }
 
@@ -262,8 +265,9 @@ obj_t* list_copy (obj_t* x) {
 
 /// SYM
 
-#include <ext/hash_map>
-using namespace __gnu_cxx;
+// #include <ext/hash_map>
+#include <unordered_map>
+// using namespace __gnu_cxx;
 
 struct sym_cmp {
   bool operator() (const char* a, const char* b) const {
@@ -272,7 +276,8 @@ struct sym_cmp {
   }
 };
 
-hash_map<const char*,obj_t*,hash<const char*>, sym_cmp> sym_tab;
+// hash_map<const char*,obj_t*,hash<const char*>, sym_cmp> sym_tab;
+unordered_map<const char*,obj_t*,hash<const char*>, sym_cmp> sym_tab;
 
 obj_t* sym_class;
 
@@ -283,7 +288,7 @@ sym_t::sym_t (char* name_) {
 
 obj_t* sym_tab_lookup(char* name) {
   // post("LOOK UP %s\n", name);
-  hash_map<const char*,obj_t*,hash<const char*>, sym_cmp>::iterator st_iter;
+  unordered_map<const char*,obj_t*,hash<const char*>, sym_cmp>::iterator st_iter;
   st_iter = sym_tab.find(name);
   if (st_iter == sym_tab.end()) 
     return NULL;

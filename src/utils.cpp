@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string>
 #include "utils.h"
+#include <unistd.h>
 // #include "gc.h"
 #define GC_malloc malloc
 #define GC_free   free
