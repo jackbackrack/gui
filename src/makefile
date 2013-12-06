@@ -9,7 +9,7 @@ ifeq ($(OS2), Darwin)
   #HLLIBS = 
   AUDIO_OBJS = port_midi.o port_audio.o
   INCS = -I/usr/local/include -I/opt/local/include/OpenEXR -I/opt/local/include/ -I/usr/local/include/OpenEXR
-  FLAGS = -flat_namespace  -Wno-write-strings -g -O3 -D MACOSX=1 -DIS_CV -D IS_AUDIO=1 $(INCS) # -pg  
+  FLAGS = -std=c++0x -Wno-write-strings -g -O3 -D MACOSX=1 -DIS_CV -D IS_AUDIO=1 $(INCS) # -pg  
 else
   OS := $(strip $(shell uname -o))
   ifeq ($(OS), GNU/Linux)
@@ -17,7 +17,7 @@ else
     INCS = -I/usr/include -I/usr/include/OpenEXR  -DIS_CV
     LIBS = -lglut -lGL -lGLU -lm -lopencv_imgproc -lopencv_core -lopencv_highgui # -lcv -lcvaux -lhighgui # -L"/usr/local/share/ipp/sharedlib"  -lippi -lippcore -lippcv -lippcc -lguide -lippvm # -lglaux # -pg
     HLLIBS = -lm
-    FLAGS = -g -Wno-write-strings $(INCS)# -pg  -O3
+    FLAGS = -std=c++0x -g -Wno-write-strings $(INCS)# -pg  -O3
   else
     ifeq ($(OS), Cygwin)
       # Cygwin under Windows
@@ -26,7 +26,7 @@ else
       SLIBS = c:/jrb/ode-0.8/ode/src/libode.a  c:/progra~1/opencv/lib/cv.lib c:/progra~1/opencv/lib/cvaux.lib c:/progra~1/opencv/lib/highgui.lib c:/progra~1/opencv/lib/cxcore.lib
       LIBS =  $(SLIBS) libportaudio.win32.a libportmidi.win32.a -lglut32 -lopengl32 -lglu32 -lglaux -lwinmm -lgdi32 -lstdc++ # -pg
       #HLLIBS = 
-      FLAGS = $(INCS) -O3 -g -DIS_CV# -pg  
+      FLAGS = $(INCS) -std=c++0x -O3 -g -DIS_CV# -pg  
     else
       # unknown; fail noisily
       $(error Unknown operating system '$(OS)'; please rerun make with OS set to 'GNU/Linux', 'Darwin', or 'Cygwin')
