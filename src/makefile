@@ -34,7 +34,7 @@ else
   endif
 endif
 
-all: gui lisp lay app.a
+all: gui lisp lay app.a console.a gui.a
 
 install: all
 	cp -p *.a ../lib; cp gui lisp lay ../bin
@@ -78,10 +78,13 @@ timer.o: timer.cpp timer.h
 
 gui.o: gui.cpp props.h cmds.h keys.h
 
-gui.a: props.o cmds.o keys.o utils.o port_midi.o
-	ar -v -r -u gui.a props.o cmds.o keys.o port_midi.o
+console.a: props.o timer.o utils.o
+	ar -v -r -u console.a $^
 
-app.a: props.o cmds.o keys.o draw.o utils.o lisp.o reader.o trackball.o viz.o timer.o gfx.o lay.o $(AUDIO_OBJS)
+gui.a: props.o utils.o cmds.o keys.o port_midi.o vec_gfx.o
+	ar -v -r -u gui.a $^
+
+app.a: props.o cmds.o keys.o draw.o lisp.o reader.o trackball.o viz.o timer.o gfx.o vec_gfx.o lay.o $(AUDIO_OBJS)
 	ar -v -r -u app.a $^
 
 gui: gui.o gui.a lisp.o

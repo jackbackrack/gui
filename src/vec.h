@@ -5,7 +5,6 @@
 #ifndef __IS_VEC__
 #define __IS_VEC__
 
-#include "glut.h"
 #include "utils.h"
 #include <cmath>
 #include <cassert>
@@ -407,41 +406,23 @@ template<class T> inline T sqr_len(const vec_t<4,T>& v) {
   return sqr(v.x) + sqr(v.y) + sqr(v.z) + sqr(v.a);
 }
 
-inline void gl_vertex(const vec_t<2>& v) {
-  glVertex2d(v.x, v.y);
-}
+extern void gl_vertex(const vec_t<2>& v);
 
-inline void gl_vertex(const vec_t<3>& v) {
-  glVertex3d(v.x, v.y, v.z);
-}
+extern void gl_vertex(const vec_t<3>& v);
 
-inline void gl_normal(const vec_t<3>& v) {
-  glNormal3d(v.x, v.y, v.z);
-}
+extern void gl_normal(const vec_t<3>& v);
 
-inline void gl_color(const vec_t<3>& v) {
-  glColor3d(v.x, v.y, v.z);
-}
+extern void gl_color(const vec_t<3>& v);
 
-inline void gl_color(const vec_t<4>& v) {
-  glColor4d(v.x, v.y, v.z, v.a);
-}
+extern void gl_color(const vec_t<4>& v);
 
-inline void gl_translate(const vec_t<2>& v) {
-  glTranslated(v.x, v.y, 0);
-}
+extern void gl_translate(const vec_t<2>& v);
 
-inline void gl_translate(const vec_t<3>& v) {
-  glTranslated(v.x, v.y, v.z);
-}
+extern void gl_translate(const vec_t<3>& v);
 
-inline void gl_scale(const vec_t<3>& v) {
-  glScaled(v.x, v.y, v.z);
-}
+extern void gl_scale(const vec_t<3>& v);
 
-inline void gl_scale(const vec_t<2>& v) {
-  glScaled(v.x, v.y, 1.0);
-}
+extern void gl_scale(const vec_t<2>& v);
 
 template<class T,int d> inline vec_t<d,T> normalize(const vec_t<d,T>& v) {
   T l = len(v);
