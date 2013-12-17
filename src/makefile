@@ -1,5 +1,5 @@
 CC = gcc
-CXX = g++
+# CXX = g++-4.8
 
 OS2 := $(strip $(shell uname))
 ifeq ($(OS2), Darwin)
@@ -81,17 +81,17 @@ gui.o: gui.cpp props.h cmds.h keys.h
 console.a: props.o timer.o utils.o lisp.o
 	ar -v -r -u console.a $^
 
-gui.a: props.o utils.o cmds.o keys.o port_midi.o vec_gfx.o
+gui.a: props.o timer.o utils.o lisp.o cmds.o keys.o port_midi.o vec_gfx.o
 	ar -v -r -u gui.a $^
 
-app.a: props.o cmds.o keys.o draw.o lisp.o reader.o trackball.o viz.o timer.o gfx.o vec_gfx.o lay.o $(AUDIO_OBJS)
+app.a: props.o timer.o utils.o lisp.o cmds.o keys.o draw.o reader.o trackball.o viz.o gfx.o vec_gfx.o lay.o $(AUDIO_OBJS)
 	ar -v -r -u app.a $^
 
-gui: gui.o gui.a lisp.o
-	g++ $(LDFLAGS) -o gui gui.o lisp.o gui.a utils.o  $(LIBS) 
+gui: gui.o console.a gui.a lisp.o
+	$(CXX) $(LDFLAGS) -o gui gui.o lisp.o gui.a utils.o  $(LIBS) 
 
 lisp: lisp.o utils.o reader.o lisp-test.o
-	g++ $(LDFLAGS) -o lisp lisp.o utils.o reader.o lisp-test.o $(LIBS) 
+	$(CXX) $(LDFLAGS) -o lisp lisp.o utils.o reader.o lisp-test.o $(LIBS) 
 
 trackball.o: trackball.cpp trackball.h
 
@@ -99,12 +99,12 @@ lay.o: lay.cpp lay.h lisp.h viz.h
 
 lay-test.o: lay-test.cpp lay.h lisp.h
 
-lay: lay-test.o app.a
-	g++ $(LDFLAGS) -o lay lay-test.o $(LIBS) app.a
+lay: lay-test.o app.a 
+	$(CXX) $(LDFLAGS) -o lay lay-test.o $(LIBS) app.a 
 
 .c.o:
 	$(CC) $(FLAGS) -c $<
 
 .cpp.o:
-	g++ $(FLAGS) -c $<
+	$(CXX) $(FLAGS) -c $<
 
