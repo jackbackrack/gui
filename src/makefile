@@ -78,7 +78,7 @@ timer.o: timer.cpp timer.h
 
 gui.o: gui.cpp props.h cmds.h keys.h
 
-console.a: props.o timer.o utils.o
+console.a: props.o timer.o utils.o lisp.o
 	ar -v -r -u console.a $^
 
 gui.a: props.o utils.o cmds.o keys.o port_midi.o vec_gfx.o

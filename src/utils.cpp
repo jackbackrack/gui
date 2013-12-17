@@ -209,3 +209,12 @@ double get_cpu_time( void ) {
   t+=(double)tim.tv_sec + (double)tim.tv_usec / 1000000.0;        
   return t; 
 }        
+
+std::string time_string (time_t rawtime) {
+  char name[256];
+  struct tm * timeinfo;
+  timeinfo = localtime ( &rawtime );
+  strftime(name,sizeof(name),"%Y-%m-%d-%H-%M-%S", timeinfo);
+  std::string res(name);
+  return res;
+}

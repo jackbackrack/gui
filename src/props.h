@@ -122,25 +122,29 @@ class str_prop_t : public prop_t {
 
 class enum_prop_t : public str_prop_t {
  public:
-  std::vector<char*> *choices;
+  std::vector< std::string > choices;
   int  incr (void* obj = NULL);
   int  decr (void* obj = NULL);
-  int str_to_enum (char* choice);
-  char* enum_to_str (int choice);
+  int str_to_enum (std::string choice);
+  std::string enum_to_str (int choice);
   enum_prop_t (void);
-  enum_prop_t (char *name_, int* var, std::vector<char*> *choices_);
-  enum_prop_t (char *name_, int* var, str_set_fun_t set_, std::vector<char*> *choices_);
-  enum_prop_t (char *name_, str_get_fun_t get_, str_set_fun_t set_, std::vector<char*> *choices_);
+  enum_prop_t (char *name_, int* var, std::vector< std::string > choices_);
+  enum_prop_t (char *name_, int* var, str_set_fun_t set_, std::vector< std::string > choices_);
+  enum_prop_t (char *name_, str_get_fun_t get_, str_set_fun_t set_, std::vector< std::string > choices_);
 };
 
-extern std::vector<char*>* new_choices(char *str, ...);
+extern std::vector< std::string > new_choices(std::string a, std::string b);
+
+extern std::vector< std::string > new_choices(std::string a, std::string b, std::string c);
+
+extern std::vector< std::string > new_choices(std::string a, std::string b, std::string c, std::string d);
 
 /// BOOL PROP
 
-char* bool_to_enum (int val);
-int  enum_to_bool (char *val);
+std::string bool_to_enum (int val);
+int         enum_to_bool (std::string val);
 
-extern std::vector<char*>* bool_choices;
+extern std::vector< std::string > bool_choices;
 
 class bool_prop_t : public enum_prop_t {
  public:
@@ -239,6 +243,7 @@ class props_t {
   int parse_arg (obj_t *sym, obj_t *val, void* obj);
   int parse_args (std::vector<const char*>::iterator& ap, std::vector<const char*>::iterator eap, void* obj = NULL);
   int parse_args (obj_t *args, void* obj = NULL);
+  int parse_args (int argc, const char *argv[], void* obj);
 };
 
 extern obj_t* prop_class;

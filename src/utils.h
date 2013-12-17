@@ -61,4 +61,9 @@ extern size_t get_mem_size( void );
 extern double get_cpu_time( void );
 }
 
+#include <time.h>
+#include <string>
+
+extern std::string time_string (time_t t);
+
 #endif

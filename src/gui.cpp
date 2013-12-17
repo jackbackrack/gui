@@ -24,11 +24,12 @@ prop_t* volume_var = NULL;
 defnumprop(flo,temp,0,0.1);
 
 char* get_is_two_screen (prop_t *prop_t, void* obj) {
-  return bool_to_enum(is_two_screen);
+  return (char*)bool_to_enum(is_two_screen).c_str();
 }
 
 int set_is_two_screen (prop_t *prop, void* obj, char* val) {
-  is_two_screen = enum_to_bool(val);
+  std::string s(val);
+  is_two_screen = enum_to_bool(s);
   return 1;
 }
 

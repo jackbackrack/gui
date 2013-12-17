@@ -356,7 +356,7 @@ enum_prop_t::enum_prop_t (void) {
 
 static void init_enum_prop 
     (enum_prop_t* prop, obj_t* class_, 
-     char* name_, str_get_fun_t get_, str_set_fun_t set_, vector<char*> *choices_, void* spec_) {
+     char* name_, str_get_fun_t get_, str_set_fun_t set_, vector< string > choices_, void* spec_) {
   prop->type  = class_;
   prop->name  = name_;
   prop->get.s = get_;
@@ -366,89 +366,97 @@ static void init_enum_prop
 }
 
 enum_prop_t::enum_prop_t 
-    (char *name_, str_get_fun_t get_, str_set_fun_t set_, vector<char*> *choices_) {
+    (char *name_, str_get_fun_t get_, str_set_fun_t set_, vector< string > choices_) {
   init_enum_prop(this, enum_prop_class, name_, get_, set_, choices_, NULL);
 }
 
-int enum_prop_t::str_to_enum (char* choice) {
+int enum_prop_t::str_to_enum (string choice) {
   int i;
-  for (i = 0; i < choices->size(); i++)
-    if (strcmp(choices->at(i), choice) == 0)
+  for (i = 0; i < choices.size(); i++)
+    if (choices[i] == choice)
       break;
   return i;
 }
 
-char* enum_prop_t::enum_to_str (int choice) {
-  return choices->at(choice);
+string enum_prop_t::enum_to_str (int choice) {
+  return choices[choice];
 }
 
 char* enum_var_get (prop_t* prop_, void* obj) {
   enum_prop_t* prop = (enum_prop_t*)prop_;
   int* var = (int*)(prop->spec);
-  return prop->enum_to_str(*var);
+  return (char*)prop->enum_to_str(*var).c_str();
 }
 
 int enum_var_set (prop_t* prop_, void* obj, char* val) {
   enum_prop_t* prop = (enum_prop_t*)prop_;
   int* var = (int*)(prop->spec);
-  *var = prop->str_to_enum(val);
+  string s(val);
+  *var = prop->str_to_enum(s);
   return 1;
 }
 
-enum_prop_t::enum_prop_t (char *name_, int* var, vector<char*> *choices_) {
+enum_prop_t::enum_prop_t (char *name_, int* var, vector< string > choices_) {
   init_enum_prop(this, enum_prop_class, name_, &enum_var_get, &enum_var_set, choices_, (void*)var);
 }
 
-enum_prop_t::enum_prop_t (char *name_, int* var, str_set_fun_t set_, vector<char*> *choices_) {
+enum_prop_t::enum_prop_t (char *name_, int* var, str_set_fun_t set_, vector< string > choices_) {
   init_enum_prop(this, enum_prop_class, name_, &enum_var_get, set_, choices_, (void*)var);
 }
 
 int enum_prop_t::incr (void* obj) {
   // TODO: FIX
-  char choice[256];
-  strcpy(choice, get.s(this, obj));
-  int n = choices->size();
+  string choice(get.s(this, obj));
+  int n = choices.size();
   int i = str_to_enum(choice);
-  return set.s(this, obj, choices->at((i+1)%n)); 
+  return set.s(this, obj, (char*)choices[(i+1)%n].c_str()); 
 }
 
 int enum_prop_t::decr (void* obj) {
   // TODO: FIX
-  char choice[256];
-  strcpy(choice, get.s(this, obj));
-  int n = choices->size();
+  string choice(get.s(this, obj));
+  int n = choices.size();
   int i = str_to_enum(choice);
-  return set.s(this, obj, choices->at((i-1+n)%n)); 
+  return set.s(this, obj, (char*)choices[(i-1+n)%n].c_str()); 
 }
 
-char* bool_to_enum (int val) {
-  return (char*)(val != 0 ? "true" : "false");
+string bool_to_enum (int val) {
+  return (val != 0 ? "true" : "false");
 }
 
-int enum_to_bool (char *val) {
-  if (strcmp(val, "true") == 0)
+int enum_to_bool (string val) {
+  if (val == "true")
     return 1;
-  else if (strcmp(val, "false") == 0)
+  else if (val == "false")
     return 0;
   else
     return 0;
 }
 
 bool is_bool_choices = false;
-vector<char*> *bool_choices = NULL;
+vector<string> bool_choices;
 
-vector<char*>* new_choices(char *str, ...) {
-  vector<char*> *choices = new vector<char*>();
-  choices->push_back(str);
-  va_list ap;
-  va_start(ap, str);
-  for (int i = 0; ; i++) {
-    char *s = va_arg(ap, char*);
-    if (s == NULL)
-      break;
-    choices->push_back(s);
-  }
-  va_end(ap);
+std::vector< std::string > new_choices(std::string a, std::string b) {
+  std::vector< std::string > choices;
+  choices.push_back(a);
+  choices.push_back(b);
+  return choices;
+}
+
+std::vector< std::string > new_choices(std::string a, std::string b, std::string c) {
+  std::vector< std::string > choices;
+  choices.push_back(a);
+  choices.push_back(b);
+  choices.push_back(c);
+  return choices;
+}
+
+std::vector< std::string > new_choices(std::string a, std::string b, std::string c, std::string d) {
+  std::vector< std::string > choices;
+  choices.push_back(a);
+  choices.push_back(b);
+  choices.push_back(c);
+  choices.push_back(d);
   return choices;
 }
 
@@ -459,7 +467,7 @@ obj_t* bool_prop_class;
 static void lazy_bool_choices (void) {
   if (!is_bool_choices) {
     is_bool_choices = true;
-    bool_choices = new_choices("false", "true", NULL);
+    bool_choices = new_choices("false", "true");
   }
 }
 
@@ -576,6 +584,15 @@ int props_t::parse_args (vector<const char*>::iterator& ap, vector<const char*>:
     count += parse_arg(ap, obj);
   }
   return count;
+}
+
+int props_t::parse_args (int argc, const char *argv[], void *obj) {
+  std::vector<const char*> args;
+  for (int i = 1; i < argc; i++) 
+    args.push_back(argv[i]);
+  std::vector<const char*>::iterator ap  = args.begin();
+  std::vector<const char*>::iterator eap = args.end();
+  return parse_args(ap, eap, obj);
 }
 
 int props_t::parse_arg (obj_t *sym, obj_t *val, void* obj) {
