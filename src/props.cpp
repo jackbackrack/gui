@@ -296,13 +296,13 @@ str_prop_t::str_prop_t (char *name_, str_get_fun_t get_, str_set_fun_t set_) {
   init_str_prop(this, str_prop_class, name_, get_, set_, NULL);
 }
 
-char* str_var_get (prop_t* prop, void* obj) {
-  char** var = (char**)(prop->spec);
+std::string str_var_get (prop_t* prop, void* obj) {
+  std::string* var = (std::string*)(prop->spec);
   return *var;
 }
 
-int str_var_set (prop_t* prop, void* obj, char* val) {
-  char** var = (char**)(prop->spec);
+int str_var_set (prop_t* prop, void* obj, std::string val) {
+  std::string* var = (std::string*)(prop->spec);
   *var = val;
   return 1;
 }
@@ -315,12 +315,12 @@ str_prop_t::str_prop_t (char *name_, char** var, str_set_fun_t set_) {
   init_str_prop(this, str_prop_class, name_, &str_var_get, set_, (void*)var);
 }
 
-char* string_var_get (prop_t* prop, void* obj) {
+string string_var_get (prop_t* prop, void* obj) {
   string* var = (string*)(prop->spec);
-  return (char*)(var->c_str());
+  return (var->c_str());
 }
 
-int string_var_set (prop_t* prop, void* obj, char* val) {
+int string_var_set (prop_t* prop, void* obj, std::string val) {
   string* var = (string*)(prop->spec);
   var->assign(val);
   return 1;
@@ -371,27 +371,29 @@ enum_prop_t::enum_prop_t
 }
 
 int enum_prop_t::str_to_enum (string choice) {
-  int i;
-  for (i = 0; i < choices.size(); i++)
-    if (choices[i] == choice)
-      break;
-  return i;
+  int i = 0;
+  for (i = 0; i < choices.size(); i++) {
+    if (choices[i] == choice) {
+      return i;
+    }
+  }
+  return 0;
 }
 
 string enum_prop_t::enum_to_str (int choice) {
   return choices[choice];
 }
 
-char* enum_var_get (prop_t* prop_, void* obj) {
+string enum_var_get (prop_t* prop_, void* obj) {
   enum_prop_t* prop = (enum_prop_t*)prop_;
   int* var = (int*)(prop->spec);
-  return (char*)prop->enum_to_str(*var).c_str();
+  string res = prop->enum_to_str(*var);
+  return res;
 }
 
-int enum_var_set (prop_t* prop_, void* obj, char* val) {
+int enum_var_set (prop_t* prop_, void* obj, string s) {
   enum_prop_t* prop = (enum_prop_t*)prop_;
   int* var = (int*)(prop->spec);
-  string s(val);
   *var = prop->str_to_enum(s);
   return 1;
 }
@@ -406,10 +408,11 @@ enum_prop_t::enum_prop_t (char *name_, int* var, str_set_fun_t set_, vector< str
 
 int enum_prop_t::incr (void* obj) {
   // TODO: FIX
-  string choice(get.s(this, obj));
+  string choice = get.s(this, obj);
   int n = choices.size();
   int i = str_to_enum(choice);
-  return set.s(this, obj, (char*)choices[(i+1)%n].c_str()); 
+  char* ns = (char*)choices[(i+1)%n].c_str();
+  return set.s(this, obj, ns); 
 }
 
 int enum_prop_t::decr (void* obj) {

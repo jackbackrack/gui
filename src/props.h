@@ -21,8 +21,8 @@ typedef int      (*flo_set_fun_t)(prop_t *spec, void* obj, float val);
 typedef float    (*flo_get_fun_t)(prop_t *spec, void* obj);
 typedef int      (*int_set_fun_t)(prop_t *spec, void* obj, int val);
 typedef int      (*int_get_fun_t)(prop_t *spec, void* obj);
-typedef int      (*str_set_fun_t)(prop_t *spec, void* obj, char *val);
-typedef char*    (*str_get_fun_t)(prop_t *spec, void* obj);
+typedef int      (*str_set_fun_t)(prop_t *spec, void* obj, std::string val);
+typedef std::string (*str_get_fun_t)(prop_t *spec, void* obj);
 typedef props_t* (*rec_get_fun_t)(prop_t *spec, void* obj);
 
 class prop_t : public obj_t {
