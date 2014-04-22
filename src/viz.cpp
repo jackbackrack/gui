@@ -896,7 +896,6 @@ void viz_t::base_render (void) {
       glDisable(GL_TEXTURE_GEN_R);
       glDisable(GL_TEXTURE_GEN_Q);
     }
-
     end_view3d();
 
     render_frame_monitors();
@@ -1156,6 +1155,8 @@ int viz_t::parse_args (int offset, int argc, const char *argv[]) {
       is_lighting = is_shadowing;
     } else if (strcmp(arg, "-is-graphics") == 0) { 
       is_graphics = atoi(check_cmd_key_value(i++, argc, argv));
+    } else if (strcmp(arg, "-is-multisample") == 0) { 
+      is_multisample = atoi(check_cmd_key_value(i++, argc, argv));
     } else if (strcmp(arg, "-is-white-background") == 0) { 
       is_white_background = atoi(check_cmd_key_value(i++, argc, argv));
     } else if (strcmp(arg, "-n-steps") == 0) { 
@@ -1212,7 +1213,8 @@ void viz_t::base_init ( int argc, const char* argv[] ) {
   if (is_graphics) {
     mouse_button = -1;
     glutInit(&argc, (char**)argv);
-    glutInitDisplayMode (GLUT_ACCUM | GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
+    glutInitDisplayMode (GLUT_ACCUM | GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE |
+                         (is_multisample ? GLUT_MULTISAMPLE : 0));
     glutInitWindowSize (window_size.x, window_size.y); 
     glutInitWindowPosition (window_pos.x, window_pos.y);
     int handle = glutCreateWindow (argv[0]);
@@ -1262,6 +1264,9 @@ void viz_t::base_init ( int argc, const char* argv[] ) {
       } else
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f );
     }
+    if (is_multisample) {
+      glEnable(GL_MULTISAMPLE_ARB);
+    }
     /*
     glClearColor (0.0f, 0.0f, 0.0f, 0.5f);        // Black Background
     glLineWidth(1);
@@ -1276,7 +1281,9 @@ void viz_t::base_init ( int argc, const char* argv[] ) {
     */
   }
   set_base_time();
-  if (is_audio) {
+  if (my_exec()) {
+    return;
+  } else if (is_audio) {
     audio_init();
     audio_start();
   } else {

@@ -130,6 +130,38 @@ inline float num_val_set (obj_t* obj, flo num) { return ((num_t*)obj)->val = num
 
 extern obj_t* num_class;
 
+#ifdef IS_CV
+#include "opencv/cv.h"
+#include "opencv/highgui.h"
+#endif
+
+#ifdef IS_CV
+typedef IplImage picraw_t;
+typedef CvCapture cap_t;
+typedef CvSize siz_t;
+#define picraw_dat(a) ((a)->imageData)
+#else
+typedef void* picraw_t;
+typedef void* cap_t;
+typedef int siz_t;
+#define picraw_dat(a) (a)
+#endif 
+
+class pic_t : public obj_t {
+ public:
+  picraw_t* val;
+  pic_t (picraw_t* val);
+  obj_t* eval(env_t& env);
+  void blat_into(std::stringstream& ss);
+};
+
+inline obj_t* new_pic (picraw_t* val) { return new pic_t(val); }
+
+inline picraw_t* pic_val (obj_t* obj) { return ((pic_t*)obj)->val; }
+inline picraw_t* pic_val_set (obj_t* obj, picraw_t* val) { return ((pic_t*)obj)->val = val; }
+
+extern obj_t* num_class;
+
 class vec3_t : public obj_t {
  public:
   vec_t<3> val;

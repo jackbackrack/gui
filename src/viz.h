@@ -47,6 +47,7 @@ class viz_t {
   int is_white_background;
   int is_step;
   int is_stepping;
+  int is_multisample;
   int is_dumping;
   int is_dump_all;
   int is_tracing;
@@ -158,6 +159,7 @@ class viz_t {
   void on_button_press ( int button, int state, int x, int y );
   void regenerate_shadow_map(void);
   void setup_rc(void);
+  virtual bool my_exec( void ) { return false; }
   viz_t () : 
     is_quit(false),
     is_dumping_avi(false), 
@@ -172,6 +174,7 @@ class viz_t {
     is_graphics(1),
     is_lighting(0),
     is_shadowing(0),
+    is_multisample(0),
     is_show_lights(0),
     use_textures(1),
     is_full_screen(0),

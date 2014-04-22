@@ -442,6 +442,23 @@ void format_int (std::string& buf, obj_t *x) {
   buf.append(ss.str());
 }
 
+/// PIC
+
+obj_t* pic_class;
+
+pic_t::pic_t (picraw_t* val_) { 
+  type = pic_class; 
+  val  = val_; 
+}
+
+obj_t* pic_t::eval(env_t& env) {
+  return this;
+}
+
+void pic_t::blat_into(stringstream& ss) {
+  ss << "pic";
+}
+
 /// VEC3
 
 obj_t* vec3_class;

@@ -119,11 +119,6 @@ void tex_lay_t::init_tex (obj_t* args) {
 
 void tex_lay_t::open (void) {
   is_texture = false;
-  glGenTextures( 1, (GLuint*)&texture );
-  // post("TEXTURE %d\n", texture);
-  glBindTexture( GL_TEXTURE_2D, texture );
-  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 }
 
 void tex_lay_t::close (void) {
@@ -143,21 +138,30 @@ void tex_lay_t::render (bool is_picking, flo w, flo h) {
 #ifdef IS_CV
   CvSize size = cvGetSize(pic);
   glPushAttrib(GL_LINE_BIT | GL_CURRENT_BIT);
+
+  if (!is_texture) {
+    glGenTextures( 1, (GLuint*)&texture );
+    // post("TEXTURE %d\n", texture);
+    glBindTexture( GL_TEXTURE_2D, texture );
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+  }
+
   glBindTexture( GL_TEXTURE_2D, texture );
 
   if (!is_texture) {
-    // post("BINDING TEXTURE %d %lx %d %d\n", sim->texture, sim->pic->imageData, sim->size.width, sim->size.height);
+    // post("BINDING TEXTURE %d %p %d %d\n", texture, pic->imageData, size.width, size.height);
     // gluBuild2DMipmaps(GL_TEXTURE_2, 3, sim->size.width, sim->size.height,
     // 	                 GL_RGB, GL_UNSIGNED_BYTE, sim->pic->imageData);
     glTexImage2D
       (GL_TEXTURE_2D, 0, 3, size.width, size.height, 
-       0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pic_dat(pic));
+       0, GL_BGR_EXT, GL_UNSIGNED_BYTE, picraw_dat(pic));
     is_texture = 1;
   } 
 
   glTexSubImage2D
     (GL_TEXTURE_2D, 0, 0, 0, size.width, size.height, 
-     GL_BGR_EXT, GL_UNSIGNED_BYTE, pic_dat(pic));
+     GL_BGR_EXT, GL_UNSIGNED_BYTE, picraw_dat(pic));
 
   glEnable(GL_TEXTURE_2D);
 
@@ -204,7 +208,7 @@ cap_t* vid_lay_t::open_avi ( char *filename ) {
   for (int i = 0; ; i++) {
     if (lay_dirs->nth_filename(i, filename, pathname)) {
       CvCapture *cap = cvCaptureFromAVI( pathname.c_str() );
-      // post("AVI OPENING %d %s %lx\n", i, pathname, cap);
+      // post("AVI OPENING %d %s %p\n", i, pathname.c_str(), cap);
       if (cap != NULL)
 	return cap;
     } else 
@@ -223,16 +227,18 @@ void vid_lay_t::avi_reset (void) {
   // debug("DONE AVI\n");
 }
 
-pic_t* vid_lay_t::get_next_frame (cap_t *capture) {
+picraw_t* vid_lay_t::get_next_frame (cap_t *capture) {
 #ifdef IS_CV
   IplImage* frame = NULL;
-  if( capture != NULL && cvGrabFrame( capture )) 
+  if( capture != NULL && cvGrabFrame( capture )) {
     frame = cvRetrieveFrame( capture );
+    // printf("FRAME %p %d\n", frame, picraw_dat(frame)[500*500]);
+  }
   return frame;
 #endif
 }
 
-pic_t* vid_lay_t::get_next_avi_frame ( void ) {
+picraw_t* vid_lay_t::get_next_avi_frame ( void ) {
 #ifdef IS_CV
   IplImage* frame = get_next_frame( mov );
   
@@ -276,9 +282,8 @@ obj_t* pic_eval (env_t& env, obj_t* args) {
   return new pic_lay_t(args);
 }
 
-pic_t* pic_lay_t::open_jpg ( char *filename, int depth ) {
+picraw_t* pic_lay_t::open_jpg ( char *filename, int depth ) {
 #ifdef IS_CV
-  IplImage *image;
   std::string pathname;
   for (int i = 0; ; i++) {
     if (lay_dirs->nth_filename(i, filename, pathname)) {
@@ -296,7 +301,6 @@ pic_t* pic_lay_t::open_jpg ( char *filename, int depth ) {
 void pic_lay_t::open (void) {
 #ifdef IS_CV
   IplImage *image;
-  CvSize size;
   // post("OPENING %s\n", txt);
   image = open_jpg( filename, 3 );
   size = next_pow2_size(cvGetSize(image));
@@ -304,7 +308,7 @@ void pic_lay_t::open (void) {
   size = cvGetSize(image);
   cvResize(image, pic, 0 /* CV_INTER_LINEAR */ );
   cvRelease( (void**)&image );
-  cvFlip( pic, pic, 0 );
+  // cvFlip( pic, pic, 0 );
   tex_lay_t::open();
 #endif
 }
@@ -352,9 +356,8 @@ void vid_lay_t::close (void) {
 
 lay_t* vid_lay_t::exec (void) {
 #ifdef IS_CV
-  IplImage *image = get_next_avi_frame();
+  image = get_next_avi_frame();
   if (pic == NULL) {
-    CvSize size;
     size = next_pow2_size(cvGetSize(image));
     pic  = cvCreateImage( size, 8, 3 );
     size = cvGetSize(image);
@@ -365,6 +368,51 @@ lay_t* vid_lay_t::exec (void) {
 }
 
 void vid_lay_t::render (bool is_picking, flo aw, flo ah) {
+  if (pic != NULL && !is_picking) {
+    flo w, h;
+    calc_aspect_size(size, aw, ah, &w, &h);
+    // post("AW %f SIZE.W %d SIZE.H %d\n", aw, size.width, size.height);
+    glColor3f(1, 1, 1);
+    tex_lay_t::render(is_picking, w, h);
+  }
+}
+
+//// VFX
+
+obj_t* vfx_lay_class;
+
+vfx_lay_t:: vfx_lay_t(obj_t* args) {
+  init(vfx_lay_class, lisp_nil);
+  image = pic_val(nth(args, 0));
+}
+
+obj_t* vfx_eval (env_t& env, obj_t* args) {
+  return new vfx_lay_t(args);
+}
+
+void vfx_lay_t::open (void) {
+  tex_lay_t::open();
+}
+
+void vfx_lay_t::close (void) {
+#ifdef IS_CV
+  tex_lay_t::close();
+#endif
+}
+
+lay_t* vfx_lay_t::exec (void) {
+#ifdef IS_CV
+  if (pic == NULL) {
+    size = next_pow2_size(cvGetSize(image));
+    pic  = cvCreateImage( size, 8, 3 );
+    size = cvGetSize(image);
+  }
+  cvResize(image, pic, 0 /* CV_INTER_LINEAR */ );
+#endif
+  return this;
+}
+
+void vfx_lay_t::render (bool is_picking, flo aw, flo ah) {
   if (pic != NULL && !is_picking) {
     flo w, h;
     calc_aspect_size(size, aw, ah, &w, &h);
@@ -1392,7 +1440,7 @@ lay_t* hsplit_lay_t::exec (void) {
     // TODO: CLOSE 
     post("HSPLIT MERGING\n");
     lay_t* res = to_merge;
-    to_merge = false;
+    to_merge = NULL;
     res->parent = parent;
     return res;
   } else 
@@ -1634,6 +1682,8 @@ void init_lay (void) {
     tex_lay_class = new_class("TEX-LAY", lay_class);
     pic_lay_class = new_class("PIC-LAY", lay_class);
     env_add(lay_env, "PIC", new fun_t("PIC", pic_eval, params("child", NULL), 1));
+    vfx_lay_class = new_class("VFX-LAY", lay_class);
+    env_add(lay_env, "VFX", new fun_t("VFX", vfx_eval, params("child", NULL), 1));
     vid_lay_class = new_class("VID-LAY", lay_class);
     env_add(lay_env, "VID", new fun_t("VID", vid_eval, params("child", NULL), 1));
     txt_lay_class = new_class("TXT-LAY", lay_class);

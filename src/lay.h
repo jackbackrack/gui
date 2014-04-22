@@ -10,18 +10,6 @@
 #include "opencv/highgui.h"
 #endif
 
-#ifdef IS_CV
-typedef IplImage pic_t;
-typedef CvCapture cap_t;
-typedef CvSize siz_t;
-#define pic_dat(a) ((a)->imageData)
-#else
-typedef void* pic_t;
-typedef void* cap_t;
-typedef int siz_t;
-#define pic_dat(a) (a)
-#endif 
-
 #include "utils.h"
 #include "timer.h"
 #include "viz.h"
@@ -76,7 +64,8 @@ class tex_lay_t : public lay_t {
   int  texture;
   bool is_texture;
   siz_t size;
-  pic_t *pic;
+  picraw_t *image;
+  picraw_t *pic;
   char* filename;
   void init_tex (obj_t* args);
   void open (void);
@@ -88,7 +77,7 @@ class pic_lay_t : public tex_lay_t {
  public:
   pic_lay_t(obj_t* a);
   pic_lay_t(char* filename);
-  pic_t* open_jpg ( char *filename, int depth );
+  picraw_t* open_jpg ( char *filename, int depth );
   void open (void);
   void close (void);
   lay_t* exec (void);
@@ -101,10 +90,20 @@ class vid_lay_t : public tex_lay_t {
   int mov_ticks;
   vid_lay_t(obj_t* a);
   vid_lay_t(char* filename);
-  pic_t* get_next_avi_frame ( void );
-  pic_t* get_next_frame (cap_t *capture);
+  picraw_t* get_next_avi_frame ( void );
+  picraw_t* get_next_frame (cap_t *capture);
   void avi_reset (void);
   cap_t* open_avi ( char *filename );
+  void open (void);
+  void close (void);
+  lay_t* exec (void);
+  void render (bool is_picking, flo w, flo h);
+};
+
+class vfx_lay_t : public tex_lay_t {
+ public:
+  vfx_lay_t(obj_t* a);
+  vfx_lay_t(char* filename);
   void open (void);
   void close (void);
   lay_t* exec (void);
@@ -379,6 +378,7 @@ extern obj_t* lay_class;
 extern obj_t* sim_lay_class;
 extern obj_t* tex_lay_class;
 extern obj_t* pic_lay_class;
+extern obj_t* vfx_lay_class;
 extern obj_t* vid_lay_class;
 extern obj_t* txt_lay_class;
 extern obj_t* seq_lay_class;

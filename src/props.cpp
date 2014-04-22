@@ -117,19 +117,19 @@ vec_prop_t::vec_prop_t (char *name, vec_get_fun_t get, vec_set_fun_t set) {
   init_vec_prop(this, vec_prop_class, name, get, set, NULL);
 }
 
-vec_t<3> vec_var_get (prop_t* prop, void* obj) {
-  vec_t<3>* var = (vec_t<3>*)(prop->spec);
+vec3d_t vec_var_get (prop_t* prop, void* obj) {
+  vec3d_t* var = (vec3d_t*)(prop->spec);
   return *var;
 }
 
-int vec_var_set (prop_t* prop, void* obj, vec_t<3> val) {
-  vec_t<3>* var = (vec_t<3>*)(prop->spec);
+int vec_var_set (prop_t* prop, void* obj, vec3d_t val) {
+  vec3d_t* var = (vec3d_t*)(prop->spec);
   *var = val;
   return 1;
 }
 
-vec_prop_t::vec_prop_t (char *name, vec_t<3> *var) {
-  init_vec_prop(this, vec_prop_class, name, &vec_var_get, &vec_var_set, NULL);
+vec_prop_t::vec_prop_t (char *name, vec3d_t *var) {
+  init_vec_prop(this, vec_prop_class, name, &vec_var_get, &vec_var_set, (void*)var);
 }
 
 void vec_prop_t::copy (void* dst, void* src) {
@@ -137,8 +137,15 @@ void vec_prop_t::copy (void* dst, void* src) {
 }
 
 int vec_prop_t::scan (char *str, void* obj) {
-  vec_t<3> res;
-  sscanf(str, "(vec %lf %lf %lf)", &res.x, &res.y, &res.z); 
+  vec3d_t res;
+  int n = 0;
+  for (int i = 0; i < strlen(str); i++)
+    n += ( str[i] == ',');
+  res.z = 0;
+  if (n == 1)
+    sscanf(str, "%lf,%lf", &res.x, &res.y); 
+  else
+    sscanf(str, "%lf,%lf,%lf", &res.x, &res.y, &res.z); 
   return set.v(this, obj, res);
 }
 
@@ -148,7 +155,7 @@ int vec_prop_t::scan (obj_t *val, void* obj) {
 
 string vec_prop_t::post (string& str, void* obj_) {
   obj_t *obj = (obj_t*)obj_;
-  vec_t<3> val = get.v(this, obj);
+  vec3d_t val = get.v(this, obj);
   stringstream ss;
   obj->blat_into(ss);
   str.assign(ss.str());
@@ -565,10 +572,11 @@ int props_t::parse_arg (vector<const char*>::iterator& ap, void* obj) {
   if (name[0] == ':') {
     for (int i = 0; i < props->size(); i++) {
       prop_t *prop = props->at(i);
+      // fprintf(stderr, "LOOKING AT %s\n", prop->name);
       if (strcasecmp(&name[1], prop->name) == 0) {
         ap += 1;
         const char *arg = *ap++;
-        // post("SCANNING %s\n", prop->name);
+        // fprintf(stderr, "  SCANNING %s\n", prop->name);
         if (prop->scan((char*)arg, obj) == 0)
           uerror("Unable to process property %s on %s", name, arg);
         return 1;

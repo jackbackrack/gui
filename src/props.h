@@ -15,13 +15,13 @@
 class prop_t;
 class props_t;
 
-typedef int      (*vec_set_fun_t)(prop_t *spec, void* obj, vec_t<3> val);
-typedef vec_t<3> (*vec_get_fun_t)(prop_t *spec, void* obj);
-typedef int      (*flo_set_fun_t)(prop_t *spec, void* obj, float val);
-typedef float    (*flo_get_fun_t)(prop_t *spec, void* obj);
-typedef int      (*int_set_fun_t)(prop_t *spec, void* obj, int val);
-typedef int      (*int_get_fun_t)(prop_t *spec, void* obj);
-typedef int      (*str_set_fun_t)(prop_t *spec, void* obj, std::string val);
+typedef int     (*vec_set_fun_t)(prop_t *spec, void* obj, vec3d_t val);
+typedef vec3d_t (*vec_get_fun_t)(prop_t *spec, void* obj);
+typedef int     (*flo_set_fun_t)(prop_t *spec, void* obj, float val);
+typedef float   (*flo_get_fun_t)(prop_t *spec, void* obj);
+typedef int     (*int_set_fun_t)(prop_t *spec, void* obj, int val);
+typedef int     (*int_get_fun_t)(prop_t *spec, void* obj);
+typedef int     (*str_set_fun_t)(prop_t *spec, void* obj, std::string val);
 typedef std::string (*str_get_fun_t)(prop_t *spec, void* obj);
 typedef props_t* (*rec_get_fun_t)(prop_t *spec, void* obj);
 
@@ -104,7 +104,7 @@ class vec_prop_t : public prop_t {
   int    incr (void* obj = NULL);
   int    decr (void* obj = NULL);
   vec_prop_t (char *name_, vec_get_fun_t get, vec_set_fun_t set);
-  vec_prop_t (char *name_, vec_t<3> *var);
+  vec_prop_t (char *name_, vec3d_t *var);
 };
 
 class str_prop_t : public prop_t {
@@ -172,6 +172,10 @@ class rec_prop_t : public prop_t {
   std::string post (std::string& str, void* obj = NULL);
   rec_prop_t (char *name_, rec_get_fun_t get_, props_t *props_);
 };
+
+#define defvecprop(name,init) \
+  vec3d_t name = init; \
+  vec_prop_t* name ## _var = new vec_prop_t (#name, & name)
 
 #define defnumprop(type,name,init,inc) \
   type name = init; \
