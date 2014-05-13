@@ -174,7 +174,7 @@ class viz_t {
     is_graphics(1),
     is_lighting(0),
     is_shadowing(0),
-    is_multisample(0),
+    is_multisample(1),
     is_show_lights(0),
     use_textures(1),
     is_full_screen(0),

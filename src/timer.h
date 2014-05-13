@@ -15,5 +15,7 @@ extern double last_tval;
 extern int is_offline;
 extern flo target_fps;
 extern int ticks;
+extern flo set_target_fps( flo ntfps );
+extern flo get_target_fps( void );
 
 #endif

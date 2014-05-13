@@ -91,7 +91,7 @@ void viz_t::open_avi_out (char *filename) {
       glGetIntegerv(GL_VIEWPORT, view_port);
       CvSize sz = cvSize(view_port[2], view_port[3]);
       post("CREATING VIDEO WRITER TO %s\n", filename);
-      dumper = cvCreateVideoWriter( filename, fourcc, target_fps, sz, 1);
+      dumper = cvCreateVideoWriter( filename, fourcc, get_target_fps(), sz, 1);
       post("DUMPER %p\n", dumper);
     } else if (is_dumping_jpgs) {
       char* slash = rindex(filename, '/');
@@ -224,8 +224,8 @@ void viz_t::write_avi_out (void) {
     }
     num_frames += 1;
     // post("%d\n", num_frames);
-    if (num_frames > 0 && (num_frames % (int)(target_fps*speed)) == 0) {
-      int secs = num_frames / (target_fps*speed);
+    if (num_frames > 0 && (num_frames % (int)(get_target_fps()*speed)) == 0) {
+      int secs = num_frames / (get_target_fps()*speed);
       post("T=%02d:%02d\n", secs / 60, secs % 60);
     }
   }
@@ -804,7 +804,7 @@ void viz_t::base_render (void) {
     if (rem == INIT_REM)
       rem = 0.0;
     else
-      rem = delay - 1 / target_fps;
+      rem = delay - 1 / get_target_fps();
     */
 
     prepare_view();
@@ -925,8 +925,8 @@ void viz_t::idle (void) {
   double time = set_secs();
   delay     = (time - last_tval);
   tfps      = 1 / delay;
-  double target_delay = 1 / target_fps;
-  if (target_fps != -1 && last_tval != -1) {
+  double target_delay = 1 / get_target_fps();
+  if (get_target_fps() != -1 && last_tval != -1) {
     if (target_delay > delay) {
       usleep((target_delay - delay)*1000000);
       // post("%d\n", (int)((target_delay - delay)*1000000));
@@ -1163,7 +1163,7 @@ int viz_t::parse_args (int offset, int argc, const char *argv[]) {
       n_steps = atoi(check_cmd_key_value(i++, argc, argv));
     } else if (strcmp(arg, "-dump") == 0) { 
       speed = 1;
-      target_fps = 15;
+      set_target_fps(15);
       is_offline = 1;
       strcpy(dump_filename, check_cmd_key_value(i++, argc, argv));
       post("DUMP ARG %s\n", dump_filename);
@@ -1188,7 +1188,7 @@ int viz_t::parse_args (int offset, int argc, const char *argv[]) {
     } else if (strcmp(arg, "-640") == 0) { 
       window_size  = vec(640, 480);
     } else if (strcmp(arg, "-target-fps") == 0) { 
-      target_fps = atoi(check_cmd_key_value(i++, argc, argv));
+      set_target_fps( atof(check_cmd_key_value(i++, argc, argv)) );
     } else if (strcmp(arg, "-f") == 0) {
       is_full_screen = 1;
     } else

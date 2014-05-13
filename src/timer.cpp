@@ -6,7 +6,7 @@
 #include "time.h"
 
 int is_offline = 0;
-flo target_fps = 15.0;
+flo target_fps = -1.0;
 int ticks = 0;
 double last_tval = 0.0;
 
@@ -71,3 +71,10 @@ void set_base_time() {
   set_base_time_at(0.0);
 }
 
+flo set_target_fps ( flo ntfps ) {
+  return target_fps = ntfps;
+}
+
+flo get_target_fps ( void ) {
+  return target_fps;
+}
