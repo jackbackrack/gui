@@ -84,11 +84,11 @@ console.a: props.o timer.o utils.o lisp.o
 gui.a: props.o timer.o utils.o lisp.o cmds.o keys.o port_midi.o vec_gfx.o
 	ar -v -r -u gui.a $^
 
-app.a: props.o timer.o utils.o lisp.o cmds.o keys.o draw.o reader.o trackball.o viz.o gfx.o vec_gfx.o lay.o $(AUDIO_OBJS)
-	ar -v -r -u app.a $^
+app.a: props.o timer.o utils.o lisp.o cmds.o keys.o draw.o reader.o trackball.o viz.o gfx.o vec_gfx.o lay.o $(AUDIO_OBJS) 
+	ar -v -r -u app.a $^ 
 
-gui: gui.o console.a gui.a lisp.o
-	$(CXX) $(LDFLAGS) -o gui gui.o lisp.o gui.a utils.o  $(LIBS) 
+gui: gui.o console.a gui.a
+	$(CXX) $(LDFLAGS) -o gui gui.o gui.a  $(LIBS) 
 
 lisp: lisp.o utils.o reader.o lisp-test.o
 	$(CXX) $(LDFLAGS) -o lisp lisp.o utils.o reader.o lisp-test.o $(LIBS) 
@@ -100,7 +100,7 @@ lay.o: lay.cpp lay.h lisp.h viz.h
 lay-test.o: lay-test.cpp lay.h lisp.h
 
 lay: lay-test.o app.a 
-	$(CXX) $(LDFLAGS) -o lay lay-test.o $(LIBS) app.a 
+	$(CXX) $(LDFLAGS) -o lay lay-test.o app.a  $(LIBS)
 
 .c.o:
 	$(CC) $(FLAGS) -c $<
